@@ -30,7 +30,7 @@ A list of curated tools and libraries used for development in python
 - Sphinx contrib (https://github.com/sphinx-contrib/): a directory of sphinx modules that extend the framework.
 - flasgger (https://github.com/flasgger/flasgger): a Flask extension to generate SWAGGER documentations of ReST APIs.
 - docstr-coverage (https://github.com/HunterMcGushion/docstr_coverage): a library to report docstring coverage.
-- readthedocs (): a service to host python code documentation, in particular when generated with sphinx. Synchronises documentation with the corresponding code version.
+- readthedocs (https://readthedocs.org/): a service to host python code documentation, in particular when generated with sphinx. Synchronises documentation with the corresponding code version.
 
 ## Linting / Type Hints:
 - flake8 (https://flake8.pycqa.org/en/latest/): a library to check PEP8 compliance of your code.
