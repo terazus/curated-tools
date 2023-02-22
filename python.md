@@ -1,4 +1,4 @@
-# cureated-tools
+# PYTHON
 A list of curated tools and libraries used for development in python
 
 ## Jetbrains plugins:
