@@ -530,10 +530,16 @@ from __future__ import annotations
 
 
 def two_sum(nums: list[int], target: int) -> list[int] | None:
-    """ The two sum function returns the indices of the two numbers first numbers such that they add up to target
+    """ The two sum function returns the indices of the two first numbers in nums such that they add up to target
     
     :param nums: a list of integers
     :param target: the target sum
+    :exception TypeError: if nums is not a list or an item in nums isn't an integer or a float or if target is not 
+    an integer or a float
+    
+    >>> from lcpsolver import two_sum
+    >>> two_sum([2, 7, 11, 15], 9)
+    [0, 1]
     
     :return: a list of two integers representing the indices of the two numbers
     """
