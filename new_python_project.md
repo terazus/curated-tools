@@ -10,6 +10,8 @@
   - [Coverage report](#coverage-report)
   - [Continuous Integration](#continuous-integration)
 - [Code Documentation](#code-documentation)
+- [Linting and type checking](#linting-and-type-checking)
+- [Conclusion](#conclusion)
 
 ## Introduction
 Welcome to this tutorial where we will show you how to set up a new python project like a professional. Although this tutorial relieson very simple code you need to have basic understanding ofpython and g it commands.
@@ -36,13 +38,13 @@ and select the python template for the gitignore file. Finally select licence. W
 - CCBY for content and digital assets (https://creativecommons.org/licenses/by/2.0/)
 
 Once done, your repository should contain:
-- a README.md file
-- a .gitignore file
-- a LICENSE file
+- a `README.md` file
+- a `.gitignore` file
+- a `LICENSE` file
 
 Before we start working on the code, we first want to protect our main branch from miss manipulation. Head to the 
-setting tab of your repo and click on "branch". Click on "Add Rule" next toBranch protection rules and under 
-"Branch Name Pattern" enter the name of your main branch. Then check the option "Requires a pull request before merging". 
+setting tab of your repo and click on `branch`. Click on `Add Rule` next to and, under 
+`Branch Name Pattern`, enter the name of your main branch. Then check the option `Requires a pull request before merging`. 
 We suggest getting familiar with this panel as we will come back to it later.
 
 
@@ -59,11 +61,11 @@ venv\Scripts\activate  # for windows
 ```
 
 We now want to create a few important files:
-- requirements.txt: this file will contain all the production dependencies of our project.
-- requirements-dev.txt: this file will contain all the development dependencies of our project. This includes testing,
+- `requirements.txt`: this file will contain all the production dependencies of our project.
+- `requirements-dev.txt`: this file will contain all the development dependencies of our project. This includes testing,
 documentation, linting, etc.
-- .flake8: this file will contain the configuration for the flake8 linter.
-- .coveragerc: this file will contain the configuration for generating the unit test coverage report.
+- `.flake8`: this file will contain the configuration for the flake8 linter.
+- `.coveragerc`: this file will contain the configuration for generating the unit test coverage report.
 
 ```shell
 touch requirements.txt requirements-dev.txt .flake8 .coveragerc
@@ -227,7 +229,7 @@ class TestTwoSum(TestCase):
     def test_two_sum(self):
         self.assertEqual(two_sum([1, 2, 3, 4], 5), [0, 3])
         self.assertEqual(two_sum([2, 7, 11, 15], 9), [0, 3])
-        self.assertNotEqual(two_sum([1, 2, 3, 4], 5), [0, 2])
+        self.assertNotEqual(two_sum([1, 2, 3, 4], 5), [1, 2])
 ```
 
 Running the test command would result in an error because we are passing two parameters to the two-sum function but the
@@ -526,7 +528,7 @@ If you hover over the `two_sum()` function, you should only see the function sig
 is available because we have added type hints to the function. <br>
 Now, let's add a docstring to the function. The docstring should be right after the function declaration:
 ```python
-from __future__ import annotations
+from __future__ import annotations  # required to use unions '|' in type hints
 
 
 def two_sum(nums: list[int], target: int) -> list[int] | None:
@@ -596,5 +598,16 @@ by `readthedocs`. Open a terminal and run the command (for windows):
 Congratulations! Under `/docs/build` you now have a fully working HTML documentation. Open the `index.html` in your 
 browser and check it out. <br>
 
-We can now use read the-docs to synchronise our GitHub repository with a documentation website. Head to the website
-and login with your GitHub account.
+We can now use `readthedocs` to synchronise our GitHub repository with a documentation website. Head to the website
+and login with your GitHub account. <br>
+Once logged in, click on `Import a Project` and select your repository. If it doesn't appear, you can press the
+sync button. <br>
+Fill up the information in the form and click on `Next`. <br>
+Once your project is ready, click the 'Admin' button on the project page and go to `Advanced Settings`. Finally,
+check the `Build pull requests for this project` to enable continuous documentation. <br>
+Finally you can add the documentation badge to your `README.md` file. To do so, go tto the `Overview` section of your
+`readthedocs` project and copy the badge Markdown code at the right of the screen. <br>
+
+# Linting and type checking
+
+# Conclusion
