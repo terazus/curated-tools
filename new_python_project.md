@@ -123,8 +123,7 @@ Inside this folder, create:
 needs to start with `test_` so that unittest can `discover` it.
 
 ```shell
-mkdir lcpsolver tests
-touch lcpsolver/__init__.py lcpsolver/two_sum.py tests/test_two_sum.py
+mkdir lcpsolver tests && touch lcpsolver/__init__.py lcpsolver/two_sum.py tests/test_two_sum.py
 ```
 
 At that point, this is what yourproject should look like:
@@ -177,3 +176,220 @@ class TestTwoSum(TestCase):
     def test_two_sum(self):
         pass
 ```
+
+Running this code with the previous command will raise an errorindicating there is nothing named two_sum in our empty 
+two_sum.py file, so it can't import it. <br>
+Open the file and create an empty two_sum function:
+```python
+def two_sum():
+    pass
+```
+
+Rerun the unit test command: everything now passes but doesn't actually do anything. Before we deal with this, 
+let's make our function easier to import. Open `lcpsolver/__init__.py` and add the following line:
+```python
+from .two_sum import two_sum
+```
+
+We can now rewrite the unit test to import the two_sum function from the lcpsolver library:
+```python
+from unittest import TestCase
+
+from lcpsolver import two_sum
+
+
+class TestTwoSum(TestCase):
+    def test_two_sum(self):
+        pass
+```
+
+Let's now get to the test itself. We want to call the two_sum function with different parameter sand assert the output.
+We will use the `assertEqual` and `assertNotEqual` method from the TestCase class to compare the actual output to the expected output. We could
+alternatively use the `assertTrue` method but it doesn't provide as much information if the test fails. <br>
+```python
+from unittest import TestCase
+
+from lcpsolver import two_sum
+
+
+class TestTwoSum(TestCase):
+    def test_two_sum(self):
+        self.assertEqual(two_sum([1, 2, 3, 4], 5), [0, 3])
+        self.assertEqual(two_sum([2, 7, 11, 15], 9), [0, 3])
+        self.assertNotEqual(two_sum([1, 2, 3, 4], 5), [0, 2])
+```
+
+Running the test command would result in an error because we are passing two parameters to the two-sum function but the
+function doesn't accept any. <br>
+Let's go back to the `two_sum.py` file and do a proper implementation:
+
+```python
+def two_sum(nums, target):
+    hashmap = {}
+    for i in range(len(nums)):
+        complement = target - nums[i]
+        if complement in hashmap:
+            return [i, hashmap[complement]]
+        hashmap[nums[i]] = i
+```
+
+That's the official leet  code one-pass with a hash table. Rerun the test command and
+enjoy. <br>
+
+A few notes about the Test `TestCase` class. It provides useful class methods that will let us execute code before and 
+after each or all tests. wbr>
+The unittest library also provides patch functions and decorators to help you mock library calls (useful when your 
+code relies on an external resources, like ReST calls).
+
+Let's now deal with edge cases and error handling. Imagine the inputs of the function comes from a user and could be anything, 
+like a string. We want to make sure our function will raise a meaningful error to our end users. <br>
+There are two things we can do in our `two_sum` function:
+- implement type hints but this is not mandatory and won't be enforced by the interpreter.
+- validate the inputs and raise an exception if they are not valid.
+
+Let's do both. Open `lcpsolver/two_sum.py` and add the following lines:
+```python
+from __future__ import annotations
+
+def two_sum(nums: list[int], target: int) -> list[int] | None:
+    if not isinstance(target, (int, float)):
+        raise TypeError("two_sum() 'target' must be an integer but got %s" % type(target))
+    if not isinstance(nums, list):
+        raise TypeError("two_sum() 'nums' must be a list but got %s" % type(nums))
+    hashmap: dict[int, int] = {}
+    for i in range(len(nums)):
+        if not isinstance(nums[i], (int, float)):
+            raise TypeError("two_sum() 'nums' must be a list of integers but got %s" % nums[i])
+        complement = target - nums[i]
+        if complement in hashmap:
+            return [i, hashmap[complement]]
+        hashmap[nums[i]] = i
+```
+
+We can now go back to our unit test and make sure that:
+- it works with floats
+- it raises the correct error when the inputs are not valid
+
+```python
+from unittest import TestCase
+
+from lcpsolver import two_sum
+
+
+class TestTwoSum(TestCase):
+    def test_two_sum(self):
+        self.assertEqual(two_sum([1, 2, 3, 4], 5), [0, 3])
+        self.assertEqual(two_sum([2, 7, 11, 15], 9), [0, 3])
+        self.assertNotEqual(two_sum([1, 2, 3, 4], 5), [0, 2])
+
+    def test_two_sum_floats(self):
+        self.assertEqual(two_sum([1.00, 2, 3, 4], 5.00), [0, 3])
+
+    def test_two_sum_invalid_inputs(self):
+        with self.assertRaises(TypeError) as context:
+            two_sum([1, 2, 3, 4], "A")
+        self.assertEqual(str(context.exception), "two_sum() 'target' must be an integer but got 'str'")
+        with self.assertRaises(TypeError) as context:
+            two_sum(["A"], 5)
+        self.assertEqual(str(context.exception), "two_sum() 'nums' must be a list of integers but got 'A'")
+        with self.assertRaises(TypeError) as context:
+            two_sum("A", 5)
+        self.assertEqual(str(context.exception), "two_sum() 'nums' must be a list but got 'str'")
+```
+
+We highly suggest you to read the [unittest documentation](https://docs.python.org/3/library/unittest.html) 
+to learn more about the unittest library and its features. <br>
+
+## Coverage report
+In this fairly simple example it isn't hard to figure out which part of the code has been tested and which
+hasn't. However, as the code will grow and more people contribute we need a way to track and monitor which functions 
+are tested and which aren't. To do this we will use the coverage library that we installed earlier. <br>
+To configure the coverage library, open the `.coveragerc` file located at the root of the project (or create it if 
+you haven't yet).
+```.coveragerc
+[run]
+source = lcpsolver
+relative_files = True
+
+omit = 
+  tests/*
+```
+
+You can now replace the unit test command with the coverage command:
+```shell
+coverage run -m unittest discover -s tests  # run the unit tests
+coverage report -m  # generate a report
+```
+
+These command will generate a report that indicates the name of each source file, the number of total statements,
+the number of missed statements, the percent of statements covered and which specific lines have not been tested yet. 
+It will also create a file named `.coverage`, that needs to be added to the `.gitignore` file, so it won't be committed 
+to the repository. <br>
+If you use pycharm pro, you can also use the integrated coverage tool to integrate reports in the IDE. <br>
+
+## Continuous Integration
+The idea of what we have been doing is to prevent the introduction of breaking changes into stable branches. Whenever a 
+contributor commits code to the repo, we want to run the unit tests, generate a coverage report and ensure nothing fails. <br>
+On larger project, it's impossible to do this manually after every pull request. Thus, we are going to automate the 
+process through continuous integration, aka continuous and automated testing of source code.
+In the case of open source projects we can rely on free services to help use run our builds:
+- GitHub actions to run the actual tests build.
+- Coveralls.io to version and explore our coverage reports and ensure that the coverage doesn't decrease on each build.
+
+First create a new directory at the root of the project named `.github` and inside it create a new directory named `workflows`.
+Then create a YAML file named `ci-build.yml`:
+```shell
+mkdir .github && mkdir .github/workflows && touch .github/workflows/ci-build.yml
+```
+This file describes the steps the build needs to go through before success or failure. <br>
+We first enter a name for our build and the conditions under which it should be triggered: here on PR and push operations. <br>
+We then describe the jobs to be executed. We first enter the python versions to use. Each version in the matrix will trigger an
+independent build. Note that the newest versions of python need to be string. <br>
+We can now define the steps of our build:
+- We first need to pull our code in the machine. Conveniently enough, actions can use other actions which is what we 
+are doing here by using `actions/checkout@v2`.
+- Let's now install python with yet another integrated action: `actions/setup-python@v2`. This time we need an extra parameter to
+indicate the python version is to be pulled from the version matrix.
+- We can now install the project dev dependencies. Don't forget to install and update PIP.
+- Finally, we can run our tests and generate a coverage report. 
+
+```yaml
+name: CI Build
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', '3.11'']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Test with python unittest
+        run: |
+          coverage run -m unittest discover -s tests/
+          coverage report -m
+```
+
+Before we commit and push our code, we
+want a way to host, explore and version our reports. There are
+several free services available for open source projects and the
+one I generally use are coverall. co and codacy. com. Head to
+coverall. io and login using github OAuth. In the left menu, click
+"Add Repo''. If nothing appears under the list of available repo;
+click "sync Repos" at the top right. Finally, enable coveralls on
+the desired projects. <br>
