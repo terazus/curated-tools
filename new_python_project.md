@@ -251,11 +251,13 @@ Let's do both. Open `lcpsolver/two_sum.py` and add the following lines:
 ```python
 from __future__ import annotations
 
+
 def two_sum(nums: list[int], target: int) -> list[int] | None:
     if not isinstance(target, (int, float)):
         raise TypeError("two_sum() 'target' must be an integer but got %s" % type(target))
     if not isinstance(nums, list):
         raise TypeError("two_sum() 'nums' must be a list but got %s" % type(nums))
+    
     hashmap: dict[int, int] = {}
     for i in range(len(nums)):
         if not isinstance(nums[i], (int, float)):
@@ -298,7 +300,8 @@ class TestTwoSum(TestCase):
 ```
 
 We highly suggest you to read the [unittest documentation](https://docs.python.org/3/library/unittest.html) 
-to learn more about the unittest library and its features. <br>
+to learn more about the unittest library and its features. It's important to think of edges cases and unexpected inputs when 
+writing your tests. <br>
 
 ## Coverage report
 In this fairly simple example it isn't hard to figure out which part of the code has been tested and which
@@ -366,7 +369,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.9, '3.10', '3.11'']
+        python-version: [3.9, '3.10', '3.11']
 
     steps:
       - uses: actions/checkout@v2
@@ -385,11 +388,79 @@ jobs:
           coverage report -m
 ```
 
-Before we commit and push our code, we
-want a way to host, explore and version our reports. There are
-several free services available for open source projects and the
-one I generally use are coverall. co and codacy. com. Head to
-coverall. io and login using github OAuth. In the left menu, click
-"Add Repo''. If nothing appears under the list of available repo;
-click "sync Repos" at the top right. Finally, enable coveralls on
-the desired projects. <br>
+Before we commit and push our code, we need a way to host and version our reports. There are several free services 
+available for open source projects and the one I generally use are coverall.io and codacy.com. Head to
+coverall.io and login using GitHub OAuth. In the left menu, click `Add Repo`. If nothing appears under the list of available repos,
+click `Sync Repos` at the top right. Finally, enable coveralls on the desired projects. <br>
+Now let's go back to our build file to add the final missing piece. Remember that `.coverage` file we added to `.gitignore`? Well,
+we want to commit that file to coveralls. To do this, we will use yet another action called Andre `Mitras/coveralls-python-
+action@develop`. The workflow works in a two steps process as indicated in the documentation. Here is the final
+yaml file:
+```yaml
+name: CI Build
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9, '3.10', '3.11']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requirements.txt
+          pip install -r requirements-dev.txt
+      - name: Test with python unittest
+        run: |
+          coverage run -m unittest discover -s tests/
+          coverage report -m
+      - name: Coveralls
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          parallel: true
+          flag-name: Unit Test
+
+  coveralls_finish:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: AndreMiras/coveralls-python-action@develop
+        with:
+          parallel-finished: true
+```
+
+We are now ready to commit the changes and push them to the remote branch. Go to your GitHub project, select your branch 
+and look at the little yellow pill on the left of the commit history link. Click and look at the new entry in the popup. <br>
+You can follow the link to your build which leads to the action tab, and inspect the logs. A failing build will be 
+indicated by a red cross and a successful build by a green tick. If the build is successful, a new incoming check should 
+now tell you your report as been correctly updated on coverall and the coverage percentage of the current branch. <br>
+
+Before we create a PR, we want to report the status of our build and unit tests coverage in the README file. To do this. <br>
+Go back to the branch protection rule we created at the beginning of the's tutorial and click the `Requires status 
+checks to pass before merging` and `Require branches to be up to date before merging` options. Then, in the search box 
+enter `build` and select the build we created. Clear, enter `coveralls` and select that one as well. Then, save your 
+changes at the bottom of the page. <br>
+Now go to the `Actions` tab of the repo and select the latest workflow. At the top right, click the 3 dots and `Create a
+status badge`. Select the main branch as the branch and copy the generated markdown at the top of your README file, below
+your title and logo. <br>
+Go to coveralls and select your repository. Next to the status badge click "Embed" and copy the makdown code in
+your README file next to the build one. <br>
+Commit your code, push your local branch to the remote one and open a PR. Now wait a few minutes. <br>
+
+That's it. Merge the PR: we are done with our CI infrastructure. <br>
+
+
+## Code Documentation
