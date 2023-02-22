@@ -31,7 +31,7 @@ Welcome to this tutorial where we will show you how to set up a new python proje
 # Let's get started! 
 
 ## Create a new repo on GitHub
-First you want to head to GitHub. com and create a new project. Enter a project name, check the "Add READ ME file" option, 
+First you want to head to GitHub and create a new project. Enter a project name, check the `Add README file` option, 
 and select the python template for the gitignore file. Finally select licence. We suggest:
 - MIT for libraries (https://choosealicense.com/licenses/mit/)
 - AGPL for applications and services (https://choosealicense.com/licenses/agpl-3.0/)
