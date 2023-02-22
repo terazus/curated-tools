@@ -1,19 +1,30 @@
 # Setting up your python project like a pro
 
-## Introduction:
+## Menu
+- [Introduction](#introduction)
+  - [Requirements](#requirements)
+  - [Objectives](#objectives)
+- [Create a new repo on GitHub](#create-a-new-repo-on-github)
+- [Unit testing, Continuous Integration and Test Driven Development](#unit-testing-continuous-integration-and-test-driven-development)
+  - [Writing your first unit test](#writing-your-first-unit-test)
+  - [Coverage report](#coverage-report)
+  - [Continuous Integration](#continuous-integration)
+- [Documentation](#documentation)
+
+## Introduction
 Welcome to this tutorial where we will show you how to set up a new python project like a professional. Although this tutorial relieson very simple code you need to have basic understanding ofpython and g it commands.
 
-### Requirements:
+### Requirements
 - Basic python and command line understanding.
 - Make sure you have a GitHub account.
 - Have a git client installed (we will use the CLI in this tutorial).
 - Have python 3.x installed and an updated pip.
 - We recommend using an IDE to follow this tutorial such as pycharm.
 
-### Objectives:
+### Objectives
 - learn how to manage a GitHub repo 
 - learn how to implement unit testing, continuous integration and test driven development.
-- learn how to document code and share the documentation with the end users.
+- learn how to document code and share the documentation with users and contributors.
 
 # Let's get started! 
 
@@ -303,7 +314,7 @@ We highly suggest you to read the [unittest documentation](https://docs.python.o
 to learn more about the unittest library and its features. It's important to think of edges cases and unexpected inputs when 
 writing your tests. <br>
 
-## Coverage report
+### Coverage report
 In this fairly simple example it isn't hard to figure out which part of the code has been tested and which
 hasn't. However, as the code will grow and more people contribute we need a way to track and monitor which functions 
 are tested and which aren't. To do this we will use the coverage library that we installed earlier. <br>
@@ -330,7 +341,7 @@ It will also create a file named `.coverage`, that needs to be added to the `.gi
 to the repository. <br>
 If you use pycharm pro, you can also use the integrated coverage tool to integrate reports in the IDE. <br>
 
-## Continuous Integration
+### Continuous Integration
 The idea of what we have been doing is to prevent the introduction of breaking changes into stable branches. Whenever a 
 contributor commits code to the repo, we want to run the unit tests, generate a coverage report and ensure nothing fails. <br>
 On larger project, it's impossible to do this manually after every pull request. Thus, we are going to automate the 
@@ -449,7 +460,7 @@ indicated by a red cross and a successful build by a green tick. If the build is
 now tell you your report as been correctly updated on coverall and the coverage percentage of the current branch. <br>
 
 Before we create a PR, we want to report the status of our build and unit tests coverage in the README file. To do this. <br>
-Go back to the branch protection rule we created at the beginning of the's tutorial and click the `Requires status 
+Go back to the branch protection rule we created at the beginning of the's tutorial and click the `Requires status
 checks to pass before merging` and `Require branches to be up to date before merging` options. Then, in the search box 
 enter `build` and select the build we created. Clear, enter `coveralls` and select that one as well. Then, save your 
 changes at the bottom of the page. <br>
@@ -464,3 +475,45 @@ That's it. Merge the PR: we are done with our CI infrastructure. <br>
 
 
 ## Code Documentation
+
+As a developer, when using a library, you expect a documentation. This doc can serve a dual purpose as it also informs
+contributors about what each piece of code is doing. If you are a python dev you are probably already familiar 
+with `readthedocs`. It's okay if you are not, it just a web service to host code documentation. <br>
+It relies on a documentation framework called `Sphinx`. I personally do not like the default bright theme, so I have
+installed `sphinx-rtd-theme` and `sphinx-rtd-dark-mode`. (RTD stands for Read The Docs). <br>
+
+Before we can start writing documentation, we need to initiate `Sphinx` with the following command:
+```bash
+sphinx-quickstart docs/
+```
+
+This will prompt you with a few questions:
+- `Separate source and build`: yes
+- `Project name`: My awesome project name.
+- `Author`: Your name
+- `Release`: empty
+- `Language`: usually en
+
+You now have a new directory named `docs/` at the root of your project. Inside that directory you will find a `source` 
+directory (this is where we will write import our code documentation and write examples).
+It contains a `conf.py` file used as the sphinx configuration. Open it and complete the fields as:
+```python
+extensions = [
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
+    'sphinx_rtd_dark_mode'
+]
+html_theme = 'sphinx_rtd_theme'
+default_dark_mode = True
+html_css_files = ['custom.css']
+```
+
+The `source` dir contains a few other files we will soon go back to. <br>
+Our local documentation is now properly configured, but we didn't write doc yet. To do this we are going to follow the `PEP
+257` specification and its implement called `docstring`. This serves a dual purpose:
+- Generate an online HTML documentation
+- Generate inputs parsable by IDEs and `man`/`help` commands to generate visual help.
+
+A doc string is a comment wrapped into three double quotes. You will generally find them at the top of a file
+(describes the module) and right after each function/method declaration. They give information on the function's signature
+(what are the inputs and outputs and what are their types) and what the function does. <br>
