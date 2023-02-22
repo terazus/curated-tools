@@ -9,7 +9,7 @@
   - [Writing your first unit test](#writing-your-first-unit-test)
   - [Coverage report](#coverage-report)
   - [Continuous Integration](#continuous-integration)
-- [Documentation](#documentation)
+- [Code Documentation](#code-documentation)
 
 ## Introduction
 Welcome to this tutorial where we will show you how to set up a new python project like a professional. Although this tutorial relieson very simple code you need to have basic understanding ofpython and g it commands.
@@ -514,6 +514,81 @@ Our local documentation is now properly configured, but we didn't write doc yet.
 - Generate an online HTML documentation
 - Generate inputs parsable by IDEs and `man`/`help` commands to generate visual help.
 
-A doc string is a comment wrapped into three double quotes. You will generally find them at the top of a file
-(describes the module) and right after each function/method declaration. They give information on the function's signature
-(what are the inputs and outputs and what are their types) and what the function does. <br>
+A docstring is a comment wrapped into three double quotes. You will generally find them at the top of a file
+(describes the module) and right after each function/method declaration or before a class constructor.
+They give information on the function and methods signature (what are the inputs and outputs and what are their types) 
+and describe what they do. <br>
+
+Let's go back to the code, so we can see this in practice. Open the source file and the unit test file in an IDE. 
+In the unit test, over the `TestCase` class with your cursor: a description should appear in the tool tip, 
+describing the class and its purpose. <br>
+If you hover over the `two_sum()` function, you should only see the function signature and no description. The signature
+is available because we have added type hints to the function. <br>
+Now, let's add a docstring to the function. The docstring should be right after the function declaration:
+```python
+from __future__ import annotations
+
+
+def two_sum(nums: list[int], target: int) -> list[int] | None:
+    """ The two sum function returns the indices of the two numbers first numbers such that they add up to target
+    
+    :param nums: a list of integers
+    :param target: the target sum
+    
+    :return: a list of two integers representing the indices of the two numbers
+    """
+    if not isinstance(target, (int, float)):
+        raise TypeError("two_sum() 'target' must be an integer but got %s" % type(target))
+    if not isinstance(nums, list):
+        raise TypeError("two_sum() 'nums' must be a list but got %s" % type(nums))
+    
+    hashmap: dict[int, int] = {}
+    for i in range(len(nums)):
+        if not isinstance(nums[i], (int, float)):
+            raise TypeError("two_sum() 'nums' must be a list of integers but got %s" % nums[i])
+        complement = target - nums[i]
+        if complement in hashmap:
+            return [i, hashmap[complement]]
+        hashmap[nums[i]] = i
+```
+
+There is a wide range of attributes docstring supports; we highly suggest getting familiar with its documentation and
+specification. <br> 
+Go back to your test file, over the `two_sum()` function to now see a full detail of the documentation. You can also run 
+the `help(two_sum)` in a python console to display your documentation. <br>
+
+Inside the `docs/source` directory create a new directory with the name of your module (`lcpsolver`) and, inside, 
+create a `two_sum.rst` file (RST stands for ReStructured which is an extended Markdown format).
+```bash
+mkdir docs/source/lcpsolver && touch docs/source/lcpsolver/two_sum.rst
+```
+Open the file, add a title and call the `automodule` directive with the full name of our module:
+```rst
+# Two_sum documentation
+
+.. automodule:: lcpsolver.two_sum
+    :members:
+```
+Now, in `docs/source/index.rst` add the new file to the tree of content (TOC):
+```rst
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+   :titlesonly:
+   :numbered:
+
+   lcpsolver/two_sum
+```
+
+Before we generate a documentation, we want to remove the `docs/build` directory from versioning by adding it
+to the `.gitignore` file. The `build` directory will contain the HTML version of our documentation and will be managed 
+by `readthedocs`. Open a terminal and run the command (for windows):
+```bash
+.\docs\make.bat html
+```
+
+Congratulations! Under `/docs/build` you now have a fully working HTML documentation. Open the `index.html` in your 
+browser and check it out. <br>
+
+We can now use read the-docs to synchronise our GitHub repository with a documentation website. Head to the website
+and login with your GitHub account.
