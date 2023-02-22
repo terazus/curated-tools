@@ -1,7 +1,7 @@
 # PYTHON
 A list of curated tools and libraries used for development in python
 
-## Jetbrains plugins:
+## Pycharm plugins:
 - .env file support (https://github.com/adelf/idea-php-dotenv-plugin/): provides support for .env files.
 - EduTools (https://www.jetbrains.com/academy/): provides a feature to create classes integrated in jetbrains IDEs.
 - ExcelReader (https://github.com/obiscr/ExcelReader): provides support for reading excel files.
@@ -13,6 +13,7 @@ A list of curated tools and libraries used for development in python
 - R Language for IntelliJ (https://plugins.jetbrains.com/plugin/6632-r-language-for-intellij): provides supports for R (R need to be installed)
 - Requirements (https://plugins.jetbrains.com/plugin/10837-requirements): provides supports for python requirements files
 - ReST Console (https://plugins.jetbrains.com/plugin/8114-rest-console): provides a psotman style ReST interface to interact with web APIs.
+- Snyk (https://plugins.jetbrains.com/plugin/10972-snyk-security--code-open-source-container-iac-configurations): provide security insights on your code (requires an account on https://snyk.io/).
 
 
 ## Testing:
