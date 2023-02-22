@@ -34,7 +34,7 @@ A list of curated tools and libraries used for development in python
 ## Linting / Type Hints:
 - flake8 (https://flake8.pycqa.org/en/latest/): a library to check PEP8 compliance of your code.
 - mypy (https://mypy.readthedocs.io/en/stable/): a library to verify type hints cohesion of your code. May require some specific stub imports:
-  - data-science-types (): for numpy and other scientific libraries.
+  - data-science-types (https://github.com/wearepal/data-science-types): for numpy and other scientific libraries such as matplotlib and pandas.
   - pandas-stubs (https://pypi.org/project/pandas-stubs/): for pandas
   - sqlalchemy-stubs (https://pypi.org/project/sqlalchemy-stubs/): for SQLAlchemy
 - codacy (https://www.codacy.com/): Provides very usefull and intehrated devops features for software lifecycle (code coverage, linting, pattern analysis, ...).
