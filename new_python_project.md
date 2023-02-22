@@ -157,7 +157,7 @@ requirements-dev.txt
 
 You can now run the following commands to execute our suite of unit tests:
 ```shell
-python-m unit test discover -s tests/
+python-m unittest discover -s tests/
 ```
 
 This will raise an error telling unittest could not find any test suite. Open `tests/test_two_sum.py` and let's get started. <br>
