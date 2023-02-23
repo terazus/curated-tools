@@ -14,7 +14,8 @@
 - [Conclusion](#conclusion)
 
 ## Introduction
-Welcome to this tutorial where we will show you how to set up a new python project like a professional. Although this tutorial relieson very simple code you need to have basic understanding ofpython and g it commands.
+Welcome to this tutorial where we will show you how to set up a new python project like a professional. Although this 
+tutorial relies on very simple code you need to have basic understanding of python and git commands.
 
 ### Requirements
 - Basic python and command line understanding.
